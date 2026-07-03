@@ -1,23 +1,24 @@
-import { Login } from "@/screens/Login";
-import { Register } from "@/screens/Register";
-
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { PublicRoutes } from "./PublicRoutes";
+import { useCallback, useState } from "react";
+import { PrivateRoutes } from "./PrivateRoutes";
+import { SystemBars } from "react-native-edge-to-edge";
 
-export type PublicStackParamsList = {
-    Login: undefined;
-    Register: undefined;
-}
 
 const NavigationRoutes = () => {
-    const PublicStackRoutes = createStackNavigator<PublicStackParamsList>()
+    const [user, setUser] = useState(undefined);
 
+    const Routes = useCallback(() => {
+        if(user) {
+            return <PrivateRoutes />
+        } else {
+            return <PublicRoutes />
+        }
+    },[user])
     return (
         <NavigationContainer>
-            <PublicStackRoutes.Navigator screenOptions={{ headerShown: false }}>
-                <PublicStackRoutes.Screen name="Login" component={Login} />
-                <PublicStackRoutes.Screen name="Register" component={Register} />
-            </PublicStackRoutes.Navigator>
+            <SystemBars style={"light"} />
+            <Routes />
         </NavigationContainer>
     )
 }

@@ -3,7 +3,7 @@
 import colors from './src/shared/colors'
 
 module.exports = {
-  content: ["./App.tsx", "./components/**/*.{js,jsx,ts,tsx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   presets: [
     require("nativewind/preset")
   ],
