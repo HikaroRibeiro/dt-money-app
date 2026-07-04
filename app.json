@@ -22,9 +22,6 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
-    },
-    "plugins": [
-      "react-native-edge-to-edge"
-    ]
+    }
   }
 }

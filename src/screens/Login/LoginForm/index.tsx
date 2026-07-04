@@ -1,5 +1,8 @@
 
+import { AppButton } from "@/components/AppButton";
 import { AppInput } from "@/components/AppInput";
+import { AuthHeader } from "@/components/AuthHeader";
+import App from "App";
 import { useForm } from "react-hook-form";
 import { View, Text } from "react-native";
 
@@ -15,6 +18,7 @@ export const LoginForm = () => {
         handleSubmit } = useForm<ILoginFormData>();
     return (
         <View>
+            <AuthHeader />
             <AppInput 
                 control={control} 
                 name="email" 
@@ -31,6 +35,21 @@ export const LoginForm = () => {
                 secureTextEntry
                 leftIconName="lock-outline"
             />
+            <View className="flex-1 justify-between mt-8 mb-6 min-h-[250px]">
+                <AppButton iconName="arrow-forward" disabled={isSubmitting}>
+                    Login
+                </AppButton>
+
+                <View>
+                    <Text className="mb-6 text-base text-gray-300">
+                        Não possui uma conta?
+                    </Text>
+                    <AppButton iconName="arrow-forward" mode="outline" disabled={isSubmitting}>
+                        Cadastrar
+                    </AppButton>
+                </View>
+
+            </View>
         </View>
     );
 };
