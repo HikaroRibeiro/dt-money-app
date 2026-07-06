@@ -1,10 +1,11 @@
 import { Control, Controller, FieldValues, Path } from "react-hook-form"
-import { TextInputProps, View, Text, TouchableOpacity } from "react-native"
+import { TextInputProps, View, Text, TouchableOpacity, Alert } from "react-native"
 import { MaterialIcons } from '@expo/vector-icons';
 import { TextInput } from "react-native-gesture-handler";
 import { colors } from "@/shared/colors";
 import { useRef, useState } from "react";
 import clsx from "clsx";
+import { ErrorMessage } from "../ErrorMessage";
 
 interface IAppInputParams<T extends FieldValues> extends TextInputProps {
     control: Control<T>;
@@ -34,7 +35,8 @@ export const AppInput = <T extends FieldValues>({
         <Controller 
             control={control} 
             name={name} 
-            render={({ field: { onChange, value } }) => {
+            render={({ field: { onChange, value}, fieldState: { error } }) => {
+                console.log(error);
                 return (
                 <View className="w-full mt-4">
                     {label && <Text className={clsx("text-base mt-3 mb-2", isFocused ? "text-emerald-600" : "text-gray-600")}>{label}</Text>}
@@ -69,6 +71,9 @@ export const AppInput = <T extends FieldValues>({
                                 </TouchableOpacity>
                             ) } 
                     </TouchableOpacity>
+                    {error && (
+                        <ErrorMessage>{error.message}</ErrorMessage>
+                    )}
                 </View>
                 )
             }} />

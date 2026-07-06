@@ -1,5 +1,4 @@
 import { DismissKeyboardView } from "@/components/DismissKeyboardView";
-import { TextInput } from "react-native-gesture-handler";
 import { LoginForm } from "./LoginForm";
 import { View } from "react-native";
 

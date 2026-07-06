@@ -1,19 +1,22 @@
 
+import { DismissKeyboardView } from "@/components/DismissKeyboardView";
 import { PublicStackParamsList } from "@/routes/PublicRoutes";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { View, Text, TouchableOpacity } from "react-native"
+import { RegisterForm } from "./RegisterForm";
+import { AuthHeader } from "@/components/AuthHeader";
 
 export const Register = () => {
 
     const navigation = useNavigation<StackNavigationProp<PublicStackParamsList>>();
 
     return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text>Tela de cadastro!</Text>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Text>Ir para tela de login</Text>
-            </TouchableOpacity>
-        </View>
+        <DismissKeyboardView>
+            <View className="flex-1 w-[82%] self-center">
+                <AuthHeader />
+                <RegisterForm />
+            </View>
+        </DismissKeyboardView>
     )
 }
