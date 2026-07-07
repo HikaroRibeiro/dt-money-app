@@ -73,7 +73,7 @@ export const RegisterForm = () => {
 
                 <View>
                     <Text className="mb-6 text-base text-gray-300">
-                        Não possui uma conta?
+                        Já possui uma conta?
                     </Text>
                     <AppButton onPress={() => navigate.navigate("Login")} iconName="arrow-forward" mode="outline" disabled={isSubmitting}>
                         Acessar

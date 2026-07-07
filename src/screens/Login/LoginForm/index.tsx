@@ -6,9 +6,11 @@ import { PublicStackParamsList } from "@/routes/PublicRoutes";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useForm } from "react-hook-form";
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 import { yupResolver} from "@hookform/resolvers/yup";
 import { loginSchema } from "./schema";
+import { useAuthContext } from "@/context/auth.context";
+import { AxiosError } from "axios";
 
 export interface ILoginFormData {
     email: string;
@@ -27,10 +29,18 @@ export const LoginForm = () => {
             resolver: yupResolver(loginSchema),
         });
 
+    const {handleAuthenticate} = useAuthContext();
+
     const navigate = useNavigation<StackNavigationProp<PublicStackParamsList>>();
 
-    const onSubmit = async () => {
-
+    const onSubmit = async (userData: ILoginFormData) => {
+        try {
+            await handleAuthenticate(userData);
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                Alert.alert("Ops! Ocorreu um erro", "Email ou senha incorretos.");
+            }
+        }
     }
     
     return (

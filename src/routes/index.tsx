@@ -3,18 +3,19 @@ import { PublicRoutes } from "./PublicRoutes";
 import { useCallback, useState } from "react";
 import { PrivateRoutes } from "./PrivateRoutes";
 import { SystemBars } from "react-native-edge-to-edge";
+import { useAuthContext } from "@/context/auth.context";
 
 
 const NavigationRoutes = () => {
-    const [user, setUser] = useState(undefined);
+    const {user, token} = useAuthContext();
 
     const Routes = useCallback(() => {
-        if(user) {
+        if(user || token) {
             return <PrivateRoutes />
         } else {
             return <PublicRoutes />
         }
-    },[user])
+    },[user, token])
     return (
         <NavigationContainer>
             <SystemBars style={"light"} />
