@@ -5,8 +5,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useForm } from "react-hook-form";
-import { View, Text } from "react-native"
+import { View, Text, Alert } from "react-native"
 import { registerSchema } from "./schema";
+import { useAuthContext } from "@/context/auth.context";
+import { AxiosError } from "axios";
 
 export interface IRegisterFormData {
     email: string;
@@ -30,8 +32,16 @@ export const RegisterForm = () => {
         resolver: yupResolver(registerSchema),
      });
 
-     const onSubmit = async () => {
-        
+     const {handleRegister} = useAuthContext();
+
+     const onSubmit = async (userData: IRegisterFormData) => {
+        try {
+            await handleRegister(userData);
+        }catch (error) {
+            if (error instanceof AxiosError) {
+                Alert.alert("Ops! Ocorreu um erro", error.message);
+            }
+        }
      }
 
     return (
@@ -42,6 +52,7 @@ export const RegisterForm = () => {
                 label="Nome:" 
                 placeholder="Seu nome de usuário."
                 leftIconName="person"
+                className="flex-1 text-base text-gray-500"
             />
             <AppInput 
                 control={control} 
@@ -49,6 +60,7 @@ export const RegisterForm = () => {
                 label="E-mail:" 
                 placeholder="mail@example.com."
                 leftIconName="mail-outline"
+                className="flex-1 text-base text-gray-500"
             />
             <AppInput 
                 control={control} 
@@ -57,6 +69,7 @@ export const RegisterForm = () => {
                 placeholder="Sua senha aqui."
                 leftIconName="lock-outline"
                 secureTextEntry
+                className="flex-1 text-base text-gray-500"
             />
             <AppInput 
                 control={control} 
@@ -65,6 +78,7 @@ export const RegisterForm = () => {
                 placeholder="Repita a sua senha aqui."
                 leftIconName="lock-outline"
                 secureTextEntry
+                className="flex-1 text-base text-gray-500"
             />
             <View className="flex-1 justify-between mt-8 mb-6 min-h-[250px]">
                 <AppButton onPress={handleSubmit(onSubmit)} iconName="arrow-forward" disabled={isSubmitting}>
