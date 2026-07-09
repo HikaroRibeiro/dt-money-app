@@ -5,10 +5,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useForm } from "react-hook-form";
-import { View, Text, Alert } from "react-native"
+import { View, Text, Alert, ActivityIndicator } from "react-native"
 import { registerSchema } from "./schema";
 import { useAuthContext } from "@/context/auth.context";
 import { AxiosError } from "axios";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { colors } from "@/shared/colors";
 
 export interface IRegisterFormData {
     email: string;
@@ -33,14 +35,13 @@ export const RegisterForm = () => {
      });
 
      const {handleRegister} = useAuthContext();
+     const {handleError} = useErrorHandler();
 
      const onSubmit = async (userData: IRegisterFormData) => {
         try {
             await handleRegister(userData);
         }catch (error) {
-            if (error instanceof AxiosError) {
-                Alert.alert("Ops! Ocorreu um erro", error.message);
-            }
+            handleError(error, "Ops! Falha ao cadastrar o usuário.");
         }
      }
 
@@ -82,7 +83,7 @@ export const RegisterForm = () => {
             />
             <View className="flex-1 justify-between mt-8 mb-6 min-h-[250px]">
                 <AppButton onPress={handleSubmit(onSubmit)} iconName="arrow-forward" disabled={isSubmitting}>
-                    Cadastrar
+                    {isSubmitting ? <ActivityIndicator size="small" color={colors.white} /> : "Cadastrar"}
                 </AppButton>
 
                 <View>

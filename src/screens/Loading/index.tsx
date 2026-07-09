@@ -22,7 +22,6 @@ export const Loading: React.FC<Props> = ({ setLoading }) => {
                 }
                 
             } catch (error) {
-                console.log(error)
                 await handleLogout()
             }finally {
                 setLoading(false)

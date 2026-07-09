@@ -6,11 +6,13 @@ import { PublicStackParamsList } from "@/routes/PublicRoutes";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useForm } from "react-hook-form";
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, ActivityIndicator } from "react-native";
 import { yupResolver} from "@hookform/resolvers/yup";
 import { loginSchema } from "./schema";
 import { useAuthContext } from "@/context/auth.context";
-import { AxiosError } from "axios";
+import { useSnackbarContext } from "@/context/snackbar.context";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { colors } from "@/shared/colors";
 
 export interface ILoginFormData {
     email: string;
@@ -30,6 +32,8 @@ export const LoginForm = () => {
         });
 
     const {handleAuthenticate} = useAuthContext();
+    const {handleError} = useErrorHandler();
+    const {notify} = useSnackbarContext();
 
     const navigate = useNavigation<StackNavigationProp<PublicStackParamsList>>();
 
@@ -37,9 +41,7 @@ export const LoginForm = () => {
         try {
             await handleAuthenticate(userData);
         } catch (error) {
-            if (error instanceof AxiosError) {
-                Alert.alert("Ops! Ocorreu um erro", "Email ou senha incorretos.");
-            }
+            handleError(error, "Falha ao logar");
         }
     }
     
@@ -65,14 +67,18 @@ export const LoginForm = () => {
             />
             <View className="flex-1 justify-between mt-8 mb-6 min-h-[250px]">
                 <AppButton onPress={handleSubmit(onSubmit)} iconName="arrow-forward" disabled={isSubmitting}>
-                    Login
+                    {isSubmitting ? <ActivityIndicator size="small" color={colors.white} /> : "Login"}
                 </AppButton>
 
                 <View>
                     <Text className="mb-6 text-base text-gray-300">
                         Não possui uma conta?
                     </Text>
-                    <AppButton onPress={() => navigate.navigate("Register")} iconName="arrow-forward" mode="outline" disabled={isSubmitting}>
+                    <AppButton 
+                        onPress={() => navigate.navigate("Register")} 
+                            iconName="arrow-forward" 
+                            mode="outline" 
+                            disabled={isSubmitting}>
                         Cadastrar
                     </AppButton>
                 </View>

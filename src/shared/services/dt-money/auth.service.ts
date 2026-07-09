@@ -5,7 +5,7 @@ import { IAuthenticateResponse } from "@/shared/interfaces/https/authenticate-re
 
 export const authenticate = async (userData: ILoginFormData): Promise<IAuthenticateResponse> => {
     const {data} = await dtMoneyApi.post<IAuthenticateResponse>("/auth/login", userData);
-
+    console.log("Authenticate", data.token);
     return data;
 }
 
