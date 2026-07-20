@@ -5,13 +5,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from "@/shared/colors";
 import { useBottomSheetContext } from "@/context/bottomsheet.context";
 import CurrencyInput from "react-native-currency-input";
+import { SelectTypeSelector } from "../SelectType";
 
 export const NewTransaction = () => {
 
     const {closeBottomSheet} = useBottomSheetContext()
 
     const [transaction, setTransaction] = useState<ICreateTransactionInterface>({
-        typeId: 1,
+        typeId: 2,
         description: "",
         categoryId: 1,
         value: 0
@@ -50,7 +51,11 @@ export const NewTransaction = () => {
                     precision={2}
                     minValue={0}
                     onChangeValue={(value) => setTransactionData("value", value ?? 0)} 
-                     />   
+                     />
+                <SelectTypeSelector 
+                    setTransactionType={(typeId) => setTransactionData("typeId", typeId)} 
+                    typeId={transaction.typeId}
+                 />   
             </View>
         </View>
 
