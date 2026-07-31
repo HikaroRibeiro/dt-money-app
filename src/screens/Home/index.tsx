@@ -9,13 +9,15 @@ import { AuthHeader } from "@/components/AuthHeader";
 import { useEffect } from "react";
 import { useTransactionContext } from "@/context/transaction.context";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { FlatList } from "react-native-gesture-handler";
+import { ListHeader } from "./ListHeader";
 
 
 export const Home = () => {
 
     const navigate = useNavigation<StackNavigationProp<PublicStackParamsList>>();
     const {handleLogout} = useAuthContext();
-    const {fetchCategories} = useTransactionContext();
+    const {fetchCategories, fetchTransactions} = useTransactionContext();
     const {handleError} = useErrorHandler();
 
     const handleFetchCategories = async () => {
@@ -29,15 +31,16 @@ export const Home = () => {
     useEffect(() => {
         (async () => {
             await handleFetchCategories();
+            await fetchTransactions();
         })();
     }, [])
 
     return (
         <SafeAreaView className="flex-1 bg-stone-800">
-            <AuthHeader />
-            <TouchableOpacity onPress={handleLogout}>
-                <Text>Sair</Text>
-            </TouchableOpacity>
+            <FlatList 
+                ListHeaderComponent={<ListHeader />} 
+                data={[]} 
+                renderItem={() => <></>} />
         </SafeAreaView>
     )
 }

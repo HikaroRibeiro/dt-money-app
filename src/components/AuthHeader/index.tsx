@@ -19,7 +19,7 @@ export const AuthHeader = () => {
     const {openBottomSheet} = useBottomSheetContext()
 
     return (
-        <View className="w-full flex-row items-center justify-between p-8">
+        <View className="w-full flex-row justify-between p-8 bg-stone-700">
             <View>
                 <Image source={require("@/assets/Logo.png")} className="h-[30px] w-[130px]" />
                 <TouchableOpacity className="mt-2 flex-row items-center gap-2" onPress={handleLogout}>

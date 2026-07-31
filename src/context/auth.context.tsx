@@ -29,7 +29,6 @@ export const AuthContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
         await ASyncStorage.setItem("dt-money", JSON.stringify({user, token}));
 
-        console.log({user, token})
         setUser(user);
         setToken(token);
     }
