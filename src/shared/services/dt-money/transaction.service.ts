@@ -4,6 +4,8 @@ import { IGetTransactionParams, IGetTransactionResponse } from "@/shared/interfa
 import { ITransactionCategory } from "@/shared/interfaces/https/transaction-categorie-response";
 import qs from "qs";
 
+// Aqui ficam todas as funções que se comunicam com o back-end.
+
 export const getTransactionCategories = async(): Promise<ITransactionCategory[]> => {
     const {data} = await dtMoneyApi.get<ITransactionCategory[]>("/transaction/categories");
     return data;
@@ -19,4 +21,8 @@ export const getTransactions = async (params: IGetTransactionParams): Promise<IG
         paramsSerializer: params => qs.stringify(params, { arrayFormat: "repeat"})
     });
     return data;
+}
+
+export const deleteTransaction = async (transactionId: number): Promise<void> => {
+    await dtMoneyApi.delete(`/transaction/${transactionId}`);
 }
