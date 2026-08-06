@@ -2,6 +2,7 @@ import { dtMoneyApi } from "@/shared/api/dt-money";
 import { ICreateTransactionInterface } from "@/shared/interfaces/https/create-transaction-request";
 import { IGetTransactionParams, IGetTransactionResponse } from "@/shared/interfaces/https/get-transaction-request";
 import { ITransactionCategory } from "@/shared/interfaces/https/transaction-categorie-response";
+import { IUpdateTransactionInterface } from "@/shared/interfaces/https/update-transaction-request";
 import qs from "qs";
 
 // Aqui ficam todas as funções que se comunicam com o back-end.
@@ -25,4 +26,8 @@ export const getTransactions = async (params: IGetTransactionParams): Promise<IG
 
 export const deleteTransaction = async (transactionId: number): Promise<void> => {
     await dtMoneyApi.delete(`/transaction/${transactionId}`);
+}
+
+export const updateTransaction = async (transaction: IUpdateTransactionInterface): Promise<void> => {
+    await dtMoneyApi.put("/transaction", transaction);
 }

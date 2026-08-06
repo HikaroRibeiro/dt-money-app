@@ -1,43 +1,48 @@
-import { ICreateTransactionInterface } from "@/shared/interfaces/https/create-transaction-request"
-import { useState } from "react"
+import { FC, useState } from "react"
 import { View, Text, TouchableOpacity, TextInput, ActivityIndicator } from "react-native"
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from "@/shared/colors";
 import { useBottomSheetContext } from "@/context/bottomsheet.context";
 import CurrencyInput from "react-native-currency-input";
-import { SelectTypeSelector } from "../SelectType";
-import { SelectCategoryModal } from "../SelectCategoryModal";
-import { transactionSchema } from "./schema";
 import * as yup from "yup";
-import { AppButton } from "../AppButton";
-import { ErrorMessage } from "../ErrorMessage";
 import { useTransactionContext } from "@/context/transaction.context";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { SelectCategoryModal } from "@/components/SelectCategoryModal";
+import { SelectTypeSelector } from "@/components/SelectType";
+import { AppButton } from "@/components/AppButton";
+import { transactionSchema } from "./schema";
+import { ITransaction } from "@/shared/interfaces/transaction";
+import { IUpdateTransactionInterface } from "@/shared/interfaces/https/update-transaction-request";
 
-type ValidationErrorsTypes = Record<keyof ICreateTransactionInterface, string>
+type ValidationErrorsTypes = Record<keyof IUpdateTransactionInterface, string>
 
-export const NewTransaction = () => {
+interface IParams {
+    transaction: ITransaction
+}
+
+export const EditTransactionForm: FC<IParams> = ({transaction: transactionToUpdate,}) => {
 
     const {closeBottomSheet} = useBottomSheetContext()
-    const {createTransaction} = useTransactionContext()
+    const {updateTransaction} = useTransactionContext()
     const {handleError} = useErrorHandler() 
     
     const [loading, setLoading] = useState(false);
 
-    const [transaction, setTransaction] = useState<ICreateTransactionInterface>({
-        typeId: 0,
-        description: "",
-        categoryId: 0,
-        value: 0
-    })
+    const [transaction, setTransaction] = useState<IUpdateTransactionInterface>({
+        id: transactionToUpdate.id,
+        typeId: transactionToUpdate.type.id,
+        categoryId: transactionToUpdate.category.id,
+        description: transactionToUpdate.description,
+        value: transactionToUpdate.value});
     const [validationErrors, setValidationErrors] = useState<ValidationErrorsTypes>();
 
-    const handleCreateTransaction = async () => {
+    const handleUpdateTransaction = async () => {
         try{
             setLoading(true);
 
             await transactionSchema.validate(transaction, {abortEarly: false});
-            await createTransaction(transaction);
+            await updateTransaction(transaction);
             closeBottomSheet();
             
         } catch (error) {
@@ -45,19 +50,19 @@ export const NewTransaction = () => {
                 const errors = {description:""} as ValidationErrorsTypes;
                 error.inner.forEach(err => {
                     if(err.path){
-                        errors[err.path as keyof ICreateTransactionInterface] = err.message;
+                        errors[err.path as keyof IUpdateTransactionInterface] = err.message;
                     }
                 });
                 setValidationErrors(errors);
             } else {
-                handleError(error, "Ops! Falha ao criar a transação.");
+                handleError(error, "Ops! Falha ao atualizar a transação.");
             }
         } finally {
             setLoading(false);
         }
     }
 
-    const setTransactionData = (key: keyof ICreateTransactionInterface, value: string | number) => {
+    const setTransactionData = (key: keyof IUpdateTransactionInterface, value: string | number) => {
         setTransaction(prevData => ({ ...prevData, [key]: value }))   
     }
 
@@ -66,7 +71,7 @@ export const NewTransaction = () => {
             <TouchableOpacity 
                 onPress={() => closeBottomSheet()} 
                 className="w-full flex-row justify-between">
-                <Text className="text-xl font-bold text-white">Nova transação</Text>
+                <Text className="text-xl font-bold text-white">Editar</Text>
                 <MaterialIcons 
                     name="close"
                     color={colors.gray[700]}
@@ -115,7 +120,7 @@ export const NewTransaction = () => {
                     <ErrorMessage>{validationErrors.typeId}</ErrorMessage>}
                     
                 <View className="my-4">
-                    <AppButton onPress={handleCreateTransaction} iconName={"save"} mode={"fill"}>{loading ? <ActivityIndicator color={colors.white} /> : "Registrar"}</AppButton>
+                    <AppButton onPress={handleUpdateTransaction} iconName={"save"} mode={"fill"}>{loading ? <ActivityIndicator color={colors.white} /> : "Atualizar"}</AppButton>
                 </View>   
             </View>
         </View>

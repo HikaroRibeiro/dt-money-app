@@ -62,7 +62,7 @@ export const BottomSheetProvider: FC<PropsWithChildren> = ({ children }) => {
                 onChange={handleSheetChanges}
                 backgroundStyle={
                     {
-                        backgroundColor: colors["background-secondary"],
+                        backgroundColor: colors["background-tertiary"],
                         borderTopLeftRadius: 32,
                         borderTopRightRadius: 32,
                         elevation: 9
