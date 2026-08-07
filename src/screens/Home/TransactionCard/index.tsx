@@ -10,6 +10,7 @@ import { TransactionTypes } from "@/shared/enums/transaction-types"
 import clsx from "clsx"
 import { RightAction } from "./RightAction"
 import { LeftAction } from "./LeftAction"
+import { moneyMapper } from "@/shared/utils/money-mapper"
 
 interface Params {
     transaction: ITransaction
@@ -17,10 +18,7 @@ interface Params {
 
 export const TransactionCard: FC<Params> = ({ transaction }) => {
 
-    const formatedTransactionValue = transaction.value.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-    });
+    const formatedTransactionValue = moneyMapper(transaction.value);
 
     const isExpense = transaction.type.id === TransactionTypes.EXPENSE;
 
@@ -29,8 +27,9 @@ export const TransactionCard: FC<Params> = ({ transaction }) => {
             alignItems: "center",
             alignSelf: "center",
             overflow: "hidden",
-            width: "90%",
-            marginBottom: 16
+            width: "89%",
+            marginBottom: 10,
+            marginTop: 10
             }}
             renderRightActions={() => <RightAction transactionId={transaction.id} />}
             renderLeftActions={() => <LeftAction transaction={transaction} />}

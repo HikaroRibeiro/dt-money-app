@@ -8,6 +8,8 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { ICONS } from "./strategies/icon-strategy"
 import { CARD_DATA } from "./strategies/card-data-strategy"
+import { moneyMapper } from "@/shared/utils/money-mapper"
+import clsx from "clsx"
 
 // Utilizado o padrão de projeto Strategy neste componente.
 
@@ -23,18 +25,17 @@ export const TransactionCard: FC<IProps> = ({ type, amount}) => {
     const iconData = ICONS[type];
     const cardData = CARD_DATA[type];
 
-    const formattedAmount = amount.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-    });
+    const formattedAmount = moneyMapper(amount);
 
     const{transactions} = useTransactionContext()
 
     const lastTransaction = transactions.find((transaction) => transaction.type.id === type);
 
     return (
-        <View className={`${cardData.bgColor} min-w-[280px] rounded-xl px-8 py-6 justify-between mr-6`}>
-            <View className="flex-row justify-between items-center mb-2">
+        <View className={clsx(`${cardData.bgColor} min-w-[280px] rounded-[6px] px-8 py-6 justify-between mr-6`, 
+        type === "total" && "mr-14"
+        )}>
+            <View className="flex-row justify-between items-center">
                 <Text className="text-white text-base">{cardData.label}</Text> 
                 <MaterialIcons name={ICONS[type].name} size={26} color={iconData.color} />
             </View>

@@ -16,7 +16,7 @@ export const LeftAction: FC<IParams> = ({transaction}) => {
     
     return (
         <Pressable onPress={() => openBottomSheet(<EditTransactionForm transaction={transaction} />,0)}>
-            <View className="h-[140px] w-[80px] bg-blue-600 rounded-l-[6px] items-center justify-center">
+            <View className="h-[140px] w-[80px] bg-blue-900 rounded-l-[6px] items-center justify-center">
                 <MaterialIcons name="edit" size={30} color={colors.white} />
             </View>
         </Pressable>

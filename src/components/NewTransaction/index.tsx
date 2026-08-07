@@ -90,7 +90,7 @@ export const NewTransaction = () => {
                     placeholderTextColor={colors.gray[700]}
                     value={transaction.value}
                     prefix="R$ "
-                    delimiter=","
+                    delimiter="."
                     precision={2}
                     minValue={0}
                     onChangeValue={(value) => setTransactionData("value", value ?? 0)} 
