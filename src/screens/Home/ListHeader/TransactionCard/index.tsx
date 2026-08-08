@@ -33,7 +33,7 @@ export const TransactionCard: FC<IProps> = ({ type, amount}) => {
 
     return (
         <View className={clsx(`${cardData.bgColor} min-w-[280px] rounded-[6px] px-8 py-6 justify-between mr-6`, 
-        type === "total" && "mr-14"
+        type === "total" && "mr-10"
         )}>
             <View className="flex-row justify-between items-center">
                 <Text className="text-white text-base">{cardData.label}</Text> 

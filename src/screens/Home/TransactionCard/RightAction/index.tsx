@@ -6,6 +6,7 @@ import { DeleteModal } from "./DeleteModal";
 import * as transactionService from "@/shared/services/dt-money/transaction.service";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { useSnackbarContext } from "@/context/snackbar.context";
+import { useTransactionContext } from "@/context/transaction.context";
 
 interface IParams {
     transactionId: number
@@ -16,6 +17,7 @@ export const RightAction: FC<IParams> = ({transactionId}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const {notify} = useSnackbarContext();
+    const { refreshTransaction } = useTransactionContext();
 
     const showModal = () => {
         setModalVisible(true);
@@ -35,6 +37,7 @@ export const RightAction: FC<IParams> = ({transactionId}) => {
                 message: "Transação deletada com sucesso!",
                 type: "SUCCESS"
             });
+            await refreshTransaction();
             hideModal();
         } catch (error) {
             handleError(error, "Ops! Falha ao deletar a transação.");

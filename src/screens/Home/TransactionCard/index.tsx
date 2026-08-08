@@ -27,7 +27,7 @@ export const TransactionCard: FC<Params> = ({ transaction }) => {
             alignItems: "center",
             alignSelf: "center",
             overflow: "hidden",
-            width: "89%",
+            width: "90%",
             marginBottom: 10,
             marginTop: 10
             }}

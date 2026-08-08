@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect } from "react";
 import { useTransactionContext } from "@/context/transaction.context";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, RefreshControl } from "react-native-gesture-handler";
 import { ListHeader } from "./ListHeader";
 import { TransactionCard } from "./TransactionCard";
 
@@ -15,7 +15,7 @@ export const Home = () => {
 
     const navigate = useNavigation<StackNavigationProp<PublicStackParamsList>>();
     const {handleLogout} = useAuthContext();
-    const {fetchCategories, fetchTransactions, transactions} = useTransactionContext();
+    const {fetchCategories, fetchTransactions, transactions, refreshTransaction, loading} = useTransactionContext();
     const {handleError} = useErrorHandler();
 
     const handleFetchCategories = async () => {
@@ -42,7 +42,8 @@ export const Home = () => {
                 ListHeaderComponent={ListHeader} 
                 data={transactions}
                 keyExtractor={({id}) => `transaction-${id}`} 
-                renderItem={({item}) => <TransactionCard transaction={item} />} />
+                renderItem={({item}) => <TransactionCard transaction={item} />}
+                refreshControl={<RefreshControl refreshing={loading} onRefresh={refreshTransaction} />} />
         </SafeAreaView>
     )
 }
