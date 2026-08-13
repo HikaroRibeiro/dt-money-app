@@ -15,7 +15,7 @@ export const Home = () => {
 
     const navigate = useNavigation<StackNavigationProp<PublicStackParamsList>>();
     const {handleLogout} = useAuthContext();
-    const {fetchCategories, fetchTransactions, transactions, refreshTransaction, loading} = useTransactionContext();
+    const {fetchCategories, fetchTransactions, transactions, refreshTransaction, loading, loadMoreTransactions} = useTransactionContext();
     const {handleError} = useErrorHandler();
 
     const handleFetchCategories = async () => {
@@ -30,7 +30,7 @@ export const Home = () => {
         (async () => {
             await Promise.all([
                 handleFetchCategories(),
-                fetchTransactions()
+                fetchTransactions({page: 1})
             ])
         })();
     }, [])
@@ -39,11 +39,16 @@ export const Home = () => {
         <SafeAreaView className="flex-1 bg-stone-800">
             <FlatList 
                 className="bg-stone-700"
-                ListHeaderComponent={ListHeader} 
+                ListHeaderComponent={ListHeader}
+                onEndReached={loadMoreTransactions}
+                onEndReachedThreshold={0.5} 
                 data={transactions}
                 keyExtractor={({id}) => `transaction-${id}`} 
                 renderItem={({item}) => <TransactionCard transaction={item} />}
-                refreshControl={<RefreshControl refreshing={loading} onRefresh={refreshTransaction} />} />
+                refreshControl={<RefreshControl 
+                refreshing={loading} 
+                onRefresh={refreshTransaction}
+                 />} />
         </SafeAreaView>
     )
 }
