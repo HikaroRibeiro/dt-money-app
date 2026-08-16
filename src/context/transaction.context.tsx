@@ -6,13 +6,21 @@ import { ITransaction } from "@/shared/interfaces/transaction";
 import { ITotalTransactions } from "@/shared/interfaces/total-transactions";
 import { IUpdateTransactionInterface } from "@/shared/interfaces/https/update-transaction-request";
 import { IPagination } from "@/shared/interfaces/https/get-transaction-request";
-import { is } from "date-fns/locale";
-import { set } from "date-fns";
 
 interface FetchTransactionParams {
     page: number;
 }
 
+interface ILoadings {
+    initial: boolean;
+    refresh: boolean;
+    loadMore: boolean;
+}
+
+interface HandleLoadingsParms {
+    key: keyof ILoadings,
+    value: boolean
+}
 export type TransactionContextType = {
     fetchCategories: () => Promise<void>;
     categories: ITransactionCategory[];
@@ -22,8 +30,9 @@ export type TransactionContextType = {
     totalTransactions: ITotalTransactions;
     transactions: ITransaction[];
     refreshTransaction: () => Promise<void>;
-    loading: boolean;
     loadMoreTransactions: () => Promise<void>;
+    loadings: ILoadings;
+    handleLoadings: (params: HandleLoadingsParms) => void;
 }
 
 export const TransactionContext = createContext({} as TransactionContextType);
@@ -37,7 +46,12 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
         expense: 0,
         total: 0
     } as ITotalTransactions);
-    const [loading, isLoading] = useState(false);
+
+    const [loadings, setLoadings] = useState<ILoadings>({
+        initial: false,
+        refresh: false,
+        loadMore: false
+    })
 
     const [pagination, setPagination] = useState<IPagination>({
         page: 1,
@@ -46,11 +60,14 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
         totalPages: 0
     })
 
-    const refreshTransaction = async () => {
+    const handleLoadings = ({ key, value }: HandleLoadingsParms) => {
+        setLoadings(prevData => ({ ...prevData, [key]: value }))
+    }
+
+    const refreshTransaction = useCallback(async () => {
 
         const { page, perPage } = pagination;
 
-        isLoading(true);
         const transactionResponse = await transactionService.getTransactions({
             page: 1,
             perPage: page * perPage
@@ -63,8 +80,8 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
             totalRows: transactionResponse.totalRows,
             totalPages: transactionResponse.totalPages
         })
-        isLoading(false);
-    }
+   
+    }, [pagination])
 
     const updateTransaction = async (transaction: IUpdateTransactionInterface) => {
         await transactionService.updateTransaction(transaction);
@@ -82,8 +99,6 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
     }
 
     const fetchTransactions = useCallback(async ({ page = 1 }:FetchTransactionParams) => {
-
-        isLoading(true);
 
         const transactionResponse = await transactionService.getTransactions({
             page,
@@ -103,18 +118,16 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
             totalRows: transactionResponse.totalRows,
             totalPages: transactionResponse.totalPages,
         })
-
-        isLoading(false);
         
     }, [pagination])
 
     const loadMoreTransactions = useCallback(async () => {
-        if (loading || pagination.page >= pagination.totalPages) return;
+        if (loadings.loadMore || pagination.page >= pagination.totalPages) return;
         await fetchTransactions({
             page: pagination.page + 1
         })
 
-    }, [loading, pagination])
+    }, [loadings.loadMore, pagination])
 
 
     return (
@@ -127,8 +140,9 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
             fetchTransactions,
             transactions,
             refreshTransaction,
-            loading,
-            loadMoreTransactions
+            loadMoreTransactions,
+            loadings,
+            handleLoadings
             }}>
             {children}
         </TransactionContext.Provider>
