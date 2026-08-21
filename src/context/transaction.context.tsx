@@ -33,6 +33,9 @@ export type TransactionContextType = {
     loadMoreTransactions: () => Promise<void>;
     loadings: ILoadings;
     handleLoadings: (params: HandleLoadingsParms) => void;
+    pagination: IPagination;
+    setSearchText: (value: string) => void;
+    searchText: string
 }
 
 export const TransactionContext = createContext({} as TransactionContextType);
@@ -41,6 +44,7 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
 
     const [categories, setCategories] = useState<ITransactionCategory[]>([]);
     const [transactions, setTransactions] = useState<ITransaction[]>([]);
+    const [searchText, setSearchText] = useState("");
     const [totalTransactions, setTotalTransactions] = useState<ITotalTransactions>({
         revenue: 0,
         expense: 0,
@@ -55,7 +59,7 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
 
     const [pagination, setPagination] = useState<IPagination>({
         page: 1,
-        perPage: 4,
+        perPage: 15,
         totalRows: 0,
         totalPages: 0
     })
@@ -102,7 +106,8 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
 
         const transactionResponse = await transactionService.getTransactions({
             page,
-            perPage: pagination.perPage
+            perPage: pagination.perPage,
+            searchText
         });
 
         if(page === 1) {
@@ -119,7 +124,7 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
             totalPages: transactionResponse.totalPages,
         })
         
-    }, [pagination])
+    }, [pagination, searchText])
 
     const loadMoreTransactions = useCallback(async () => {
         if (loadings.loadMore || pagination.page >= pagination.totalPages) return;
@@ -142,7 +147,10 @@ export const TransactionContextProvider: FC<PropsWithChildren> = ({ children }) 
             refreshTransaction,
             loadMoreTransactions,
             loadings,
-            handleLoadings
+            handleLoadings,
+            pagination,
+            setSearchText,
+            searchText
             }}>
             {children}
         </TransactionContext.Provider>
